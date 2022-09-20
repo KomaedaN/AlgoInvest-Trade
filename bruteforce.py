@@ -5,9 +5,7 @@ def get_csv_data(url):
     """
     get_csv_data read and get csv data from a file
 
-    :cost: cost data from csv file
-    :benefit: benefit data from csv file
-    :profit: calculate profit
+    :url: csv file link
     :return: return all data inside a list
     """
 
@@ -24,6 +22,8 @@ def get_csv_data(url):
 
 def calcul_profit(cost, benefit):
     """
+    :cost: cost per action
+    :benefit: percentage of cost of action
     :return: profit result
     """
     return (cost * benefit) / 100
