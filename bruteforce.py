@@ -1,5 +1,10 @@
 import csv
+from rich.console import Console
+from rich.table import Table
 from itertools import combinations
+
+console = Console()
+table = Table()
 
 
 def get_csv_data(url):
@@ -13,56 +18,59 @@ def get_csv_data(url):
     with open(url) as file_csv:
         reader = csv.reader(file_csv, delimiter=",")
         data_list = []
+
         for row in reader:
             cost = float(row[1])
             benefit = float(row[2])
-            profit = calcul_profit(cost, benefit)
-            data_list.append((row[0], cost, benefit, profit))
+            data_list.append((row[0], cost, benefit))
         return data_list
 
 
-def calcul_profit(cost, benefit):
-    """
-    :cost: cost per action
-    :benefit: percentage of cost of action
-    :return: profit result
-    """
-    return (cost * benefit) / 100
-
-
-def sort_benefit(data_list):
-    return sorted(data_list, key=lambda x: float(x[2]), reverse=True)
-
-
-def choose_action(test):
+def choose_action(data):
     benefit = 0.0
     max_price = 500.0
-    start = 0.0
     action_list = []
-    for i in range(len(test)):
+    for i in range(len(data)):
+        combination = combinations(data, i + 1)
+        for list_data in combination:
+            total_cost = calcul_cost(list_data)
+            if total_cost <= max_price:
+                total_benefit = benefit_value(list_data)
+                if total_benefit > benefit:
+                    action_list = list_data
+                    benefit = total_benefit
+    return action_list
 
-        datas = combinations(test, i + 1)
-        for data in datas:
-            if start + data[i][1] <= max_price:
-                profit = profit_value(data)
-                if profit > benefit:
-                    start = data[i][1]
-                    benefit = profit
-                    action_list.append(data)
-    print(action_list)
-    print(start)
-    print(benefit)
 
-def profit_value(stock_combination):
+def calcul_cost(data):
+    cost = []
+    for value in data:
+        cost.append(value[1])
+    return sum(cost)
+
+
+def benefit_value(data):
     """Valeur en % de la combinaison courante
 
     @param stock_combination : liste des actions de la combinaison courante
     @return: sum profits (float) en %
     """
     profits = []
-    for element in stock_combination:
+    for element in data:
         profits.append(element[1] * element[2] / 100)
     return sum(profits)
+
+
+def display_result(list_data):
+    table.add_column("[#8e1b1b]Actions sélectionnées", justify="center", style="#588723")
+    for i in range(len(list_data)):
+        table.add_row(f"{list_data[i][0]}")
+    console.print(table, justify="center")
+    console.print(f"[#aba6a6]Prix total des actions: [#8e1b1b]{calcul_cost(list_data)} €[/]", justify="center")
+    console.print(f"[#aba6a6]Bénéfice total des actions au bout de 2 ans: [#588723]{benefit_value(list_data)} €[/]",
+                  justify="center")
+
+
 data = get_csv_data("data/dataset0.csv")
-sorted_list = sort_benefit(data)
-choose_action(data)
+list_data = choose_action(data)
+display_result(list_data)
