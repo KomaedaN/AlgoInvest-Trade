@@ -26,9 +26,15 @@ def get_csv_data(url):
         return data_list
 
 
-def choose_action(data):
+def select_action(data, max_price):
+    """
+    select_action try all combinations, compare max price and action cost, compare total benefit and benefit
+
+    :data: action data
+    :max_price: selected maximum price
+    :return: return the most profitable actions compare to the maximum budget
+    """
     benefit = 0.0
-    max_price = 500.0
     action_list = []
     for i in range(len(data)):
         combination = combinations(data, i + 1)
@@ -72,5 +78,5 @@ def display_result(list_data):
 
 
 data = get_csv_data("data/dataset0.csv")
-list_data = choose_action(data)
+list_data = select_action(data, 500.0)
 display_result(list_data)
