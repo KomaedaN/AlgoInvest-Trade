@@ -1,11 +1,13 @@
 import csv
+import time
+
 from rich.console import Console
 from rich.table import Table
 from itertools import combinations
 
 console = Console()
 table = Table()
-
+set_timer = time.time()
 
 def get_csv_data(url):
     """
@@ -75,6 +77,7 @@ def display_result(list_data):
     console.print(f"[#aba6a6]Prix total des actions: [#8e1b1b]{calcul_cost(list_data)} €[/]", justify="center")
     console.print(f"[#aba6a6]Bénéfice total des actions au bout de 2 ans: [#588723]{benefit_value(list_data)} €[/]",
                   justify="center")
+    console.print(f"[#aba6a6]Temps écoulé: [#D2BFF0]{time.time() - set_timer} sec[/]", justify="center")
 
 
 data = get_csv_data("data/dataset0.csv")
