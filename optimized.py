@@ -17,9 +17,9 @@ def get_csv_data(url):
         for row in reader:
             try:
                 float(row[1])
-                cost = float(row[1])
-                benefit = float(row[2])
-                data_list.append((row[0], cost, benefit))
+                cost = int(float(row[1]) * 100)
+                profit = float(row[2]) * cost / 100
+                data_list.append((row[0], cost, profit))
             except ValueError:
                 pass
 
@@ -27,10 +27,18 @@ def get_csv_data(url):
 
 
 def select_action(data, max_price):
-    current_price = 0.0
-    benefit = 0.0
-    action_list = []
+    matrix = [[0 for x in range(max_price + 1)] for x in range(len(data) + 1)]  # init matrix
+
+    for i in range(1, len(data) + 1):
+
+        for w in range(1, max_price + 1):
+            current_cost = data[i - 1][1]
+            current_profit = data[i - 1][2]
+            if current_cost <= w:
+                matrix[i][w] = max(current_profit + matrix[i - 1][w - current_cost], matrix[i - 1][w])
+            else:
+                matrix[i][w] = matrix[i - 1][w]  # keep the previous data
 
 
-data = get_csv_data("data/dataset1.csv")
-select_action(data, 500.0)
+data = get_csv_data("data/dataset0.csv")
+select_action(data, 50000)
