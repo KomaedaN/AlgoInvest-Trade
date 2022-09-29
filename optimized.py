@@ -9,6 +9,7 @@ table = Table()
 
 set_timer = time.time()
 
+
 def get_csv_data(url):
     """
     get_csv_data read and get csv data from a file
@@ -25,6 +26,8 @@ def get_csv_data(url):
                 float(row[1])
                 cost = int(float(row[1]) * 100)
                 profit = float(row[2]) * cost / 100
+                if cost <= 0:
+                    continue
                 data_list.append((row[0], cost, profit))
             except ValueError:
                 pass
@@ -34,7 +37,6 @@ def get_csv_data(url):
 
 def select_action(data, max_price):
     matrix = [[0 for x in range(max_price + 1)] for x in range(len(data) + 1)]  # init matrix
-
     for i in range(1, len(data) + 1):
 
         for w in range(1, max_price + 1):
@@ -78,6 +80,6 @@ def display_result(value):
     console.print(f"[#aba6a6]Temps écoulé: [#D2BFF0]{time.time() - set_timer} sec[/]", justify="center")
 
 
-data = get_csv_data("data/dataset0.csv")
+data = get_csv_data("data/dataset1.csv")
 value = select_action(data, 50000)
 display_result(value)
